@@ -1,0 +1,31 @@
+query getLoadersbyTemperatureDevice {
+  description:"Allow to search Loaders by Device"
+  statement:
+    SELECT org.rocket.shipping.Loader 
+    WHERE (temperatureDevice == _$temperatureDevice)
+}
+query getLoadersbyLocationDevice {
+  description:"Allow to search Loaders by Device"
+  statement:
+    SELECT org.rocket.shipping.Loader 
+    WHERE (locationDevice == _$locationDevice)
+}
+query getShipmentbyLoader {
+  description:"Allow to search Shipment by Loader"
+  statement:
+    SELECT org.rocket.shipping.Shipment 
+    WHERE (loader == _$loader)
+}
+query getShipmentbyTemperatureDevice {
+  description:"Allow to search Shipment by Loader"
+  statement:
+    SELECT org.rocket.shipping.Shipment 
+    WHERE (loader.temperatureDevice == _$temperatureDevice)
+}
+
+query getTemperatureDevice {
+  description:"Allow to search Loaders by Device"
+  statement:
+    SELECT org.rocket.shipping.TemperatureDevice 
+    WHERE (DeviceId == _$DeviceId)
+}

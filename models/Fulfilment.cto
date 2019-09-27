@@ -1,0 +1,153 @@
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/**
+ * Write your model definitions here
+ */
+
+namespace org.rocket.shipping
+
+
+abstract participant Business identified by email {
+  o String email
+  o String name
+  o Double accountBalance
+  o String address
+  o String rating optional
+  o String VolationCount optional
+  o String DeliveryCount optional
+}
+
+concept Address {
+  o String zip optional
+  o String city optional
+  o String state optional
+  o String country
+}
+participant Manufacturer extends Business {}
+
+participant Shipper extends Business {}
+
+participant Importer extends Business {}
+
+
+asset Contract identified by contractId {
+  o String contractId
+  --> Shipper shipper
+  --> Manufacturer manufacturer
+  --> Importer importer
+  o Double unitPrice
+  o DateTime arrivalDateTime 
+  o Double minimumTemperature 
+  o Double maximumTemperature 
+  o Double minimumTemperatureViolationFinePerUnit
+  o Double maximumTemperatureViolationFinePerUnit
+  o Double delayViolationFine
+}
+
+asset Shipment identified by ShipmentId{
+  o String ShipmentId
+  o ProductType productType
+  o ShipmentStatus ShipmentStatus
+  o TemperatureRecord[] temperatureRecords optional
+  o TrackingRecord[] trackingRecords optional
+  o Long unitCount
+  --> Contract contract 
+  --> Loader loader
+}
+
+asset Loader identified by LoaderId{
+  o String LoaderId
+  --> TemperatureDevice temperatureDevice 
+  --> LocationDevice locationDevice 
+}
+asset TemperatureDevice identified by DeviceId{
+  o String DeviceId
+  o String currentTemperature optional
+  o DateTime updatedOn optional
+}
+
+asset LocationDevice identified by DeviceId{
+  o String DeviceId
+  o String currentLatitude optional 
+  o String currentLongitude optional 
+  o DateTime updatedOn optional
+}
+
+enum  ProductType {
+  o Fruit
+  o Meat
+  o Cosmatic
+  o FrozenItems
+}
+
+enum ShipmentStatus
+{
+  o Created
+  o InTransit
+  o Arrived
+
+}
+concept TemperatureRecord {
+  o Double centigrade
+  o String deviceId  
+}
+concept TrackingRecord {
+  o String longitude
+  o String latitude
+  o String deviceId   
+}
+concept IOTMessage {
+  o String DeviceId
+  o String Type
+  o String Value
+}
+
+abstract transaction ShipmentTransaction {
+  --> Shipment shipment
+}
+
+ transaction SubmitIOTData
+ {
+   o String payload
+ }
+
+transaction  ShipmentReceived extends ShipmentTransaction {
+}
+
+
+
+transaction LoadSeeds {
+
+}
+
+transaction PostNews {
+o String news
+}
+
+
+event TrackingEvent {
+  --> Shipment shipment
+    o TrackingRecord[] trackingRecords
+}
+
+event BroadCastNews {
+  o String news
+}
+
+event ShipmentStatusCommunicator {
+  --> Shipment shipment
+   o ShipmentStatus ShipmentStatus
+}
+
